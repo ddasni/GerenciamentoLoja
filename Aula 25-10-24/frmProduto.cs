@@ -45,14 +45,7 @@ namespace Aula_25_10_24
                 cmdSql.Append("values ");
                 cmdSql.Append("(" + txtMatricula.Text + " , '" + txtNome.Text + "' , '" + txtEmail.Text + "' ,  ");
                 cmdSql.Append(" '" + txtCelular + "' ,  '" + txtCep + "' ) ");
-
-               
-
-                cmdSql.CommandText ("INSERT INTO myTable VALUES(NULL, @number, @text)");
-                cmd.Prepare();
-
-                cmd.Parameters.AddWithValue("@number", 1);
-                cmd.Parameters.AddWithValue("@text", "One");
+                // isso é um teste
 
 
                 // MessageBox.Show(cmdSql.ToString());
