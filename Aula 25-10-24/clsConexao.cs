@@ -18,8 +18,8 @@ namespace Aula_25_10_24
             get { return _StrSql; }
             set { _StrSql = value; }
         }
-        // String privada para usar na classe conexão, onde ela gurada uma conexão com o banco de dados MySQL
-        private string strConexao = "datasource=localhost;username=root;password=;database=nome do banco de dados";
+        // String privada para usar na classe conexão, onde ela guarda uma conexão com o banco de dados MySQL
+        private string strConexao = "datasource=localhost;username=root;password=;database=Loja";
 
         // nesses dois metodos privados a baixo, como já dizem, vão abrir e fechar o banco de dados
         private MySqlConnection AbrirBanco()
