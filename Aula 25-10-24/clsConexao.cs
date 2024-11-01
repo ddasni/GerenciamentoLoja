@@ -8,18 +8,20 @@ using System.Threading.Tasks;
 
 namespace Aula_25_10_24
 {
-    internal class clsConexao
+    internal class clsConexao // "classe conexão"
     {
+        // String privada para usar na classe conexão, onde essa string armazena a consulta SQL a ser executada
         private string _StrSql;
-        private MySqlCommand cmd; // Adicione um campo para o comando
 
         public string StrSql
         {
             get { return _StrSql; }
             set { _StrSql = value; }
         }
-        private string strConexao = "datasource=localhost;username=root;password=;database=Loja";
+        // String privada para usar na classe conexão, onde ela gurada uma conexão com o banco de dados MySQL
+        private string strConexao = "datasource=localhost;username=root;password=;database=nome do banco de dados";
 
+        // nesses dois metodos privados a baixo, como já dizem, vão abrir e fechar o banco de dados
         private MySqlConnection AbrirBanco()
         {
             MySqlConnection Conn = new MySqlConnection();
@@ -36,6 +38,7 @@ namespace Aula_25_10_24
             }
         }
 
+        // neste metodo ele executa uma consulta SQL armazenada em _StrSql e retorna um DataSet com os resultados.
         public DataSet RetornarDataSet()
         {
             MySqlConnection Conn = new MySqlConnection();
@@ -65,6 +68,7 @@ namespace Aula_25_10_24
             }
         }
 
+        // Neste metodo ele executa uma consulta SQL e retorna um MySqlDataReader para leitura dos dados.
         public MySqlDataReader RetornarDataReader()
         {
 
@@ -83,13 +87,15 @@ namespace Aula_25_10_24
             }
             catch (Exception ex)
             {
+                // tratamento de erro
                 throw ex;
             }
         }
 
+        // Neste método é usado para executar comandos SQL que não retornam dados (como INSERT, UPDATE, DELETE).
         public int ExecutarCmd()
         {
-
+            // Abre uma conexão e executa uma consulta 
             MySqlConnection Conn = new MySqlConnection();
             MySqlCommand cmd = new MySqlCommand();
 
@@ -104,24 +110,13 @@ namespace Aula_25_10_24
             }
             catch (Exception ex)
             {
+                // tratamento de erro
                 throw new Exception("Erro " + ex.Message.ToString());
             }
             finally
             {
                 Conn.Close();
             }
-        }
-
-        // Adicionei isso para os parametros
-        public void Parametro(string nome, object valor)
-            // Tem que verificar esse string nome e object valor
-        {
-            if (cmd == null)
-            {
-                cmd = new MySqlCommand();
-            }
-            cmd.Parameters.AddWithValue(nome, valor);
-            // aqui o mesmo
         }
     }
 }
