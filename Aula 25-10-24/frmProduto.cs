@@ -81,6 +81,7 @@ namespace Aula_25_10_24
                     if (DS.Tables.Count > 0 && DS.Tables[0].Rows.Count > 0)
                     {
                         gridProdutos.DataSource = DS.Tables[0];
+                        gridProdutos.Visible = true; // Tornar o grid visível
                     }
                     else
                     {
@@ -102,6 +103,7 @@ namespace Aula_25_10_24
                     if (DS.Tables.Count > 0 && DS.Tables[0].Rows.Count > 0)
                     {
                         gridProdutos.DataSource = DS.Tables[0];
+                        gridProdutos.Visible = true; // Tornar o grid visível
                     }
                 }
             }
