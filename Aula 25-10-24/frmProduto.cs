@@ -59,45 +59,51 @@ namespace Aula_25_10_24
 
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
-            try
+            // Limpar o comando SQL
+            cmdSql.Clear();
+
+            // Verificar se o campo de código do produto não está vazio
+            if (!string.IsNullOrWhiteSpace(txtCodProd.Text))
             {
-                // Limpa o DataGridView antes da nova pesquisa
-                gridProdutos.DataSource = null;
+                // Montar a consulta SQL
+                cmdSql.Append("SELECT * FROM Produto WHERE cod_prod = @Codigo");
 
-                StringBuilder cmdSql = new StringBuilder();
+                // Criar o comando SQL
+                using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
+                {
+                    // Adicionar o parâmetro com o código do produto
+                    cmd.Parameters.AddWithValue("@Codigo", txtCodProd.Text);
 
-                // se o codigo for digitado
-                if (txtCodProd.Text != null && txtCodProd.Text != "")
-                {
-                    cmdSql.Append("SELECT * FROM Produto WHERE cod_prod = @cod_prod");
-                    Conexao.StrSql = cmdSql.ToString();
-                    Conexao.Parametro("@cod_prod", txtCodProd.Text);
-                }
-                // se não foi digitado
-                else
-                {
-                    cmdSql.Append("SELECT * FROM Produto");
-                    Conexao.StrSql = cmdSql.ToString();
-                }
+                    // Executar a consulta e retornar o DataSet
+                    DataSet DS = Conexao.RetornarDataSet(cmd);
 
-                // Executa a consulta e obtém o DataSet
-                DataSet ds = Conexao.RetornarDataSet();
-
-                // Exibe os resultados no DataGridView
-                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-                {
-                    gridProdutos.DataSource = ds.Tables[0];
-                    gridProdutos.Visible = true; // Torna o DataGridView visível
-                }
-                else
-                {
-                    gridProdutos.Visible = false; // deixar o DataGridView invisível se não houver dados
-                    MessageBox.Show("Nenhum resultado encontrado.");
+                    // Verificar se o DataSet contém alguma tabela
+                    if (DS.Tables.Count > 0 && DS.Tables[0].Rows.Count > 0)
+                    {
+                        gridProdutos.DataSource = DS.Tables[0];
+                    }
+                    else
+                    {
+                        // Caso não encontre resultados
+                        MessageBox.Show("Produto não encontrado.");
+                        gridProdutos.DataSource = null; // Limpar a grid se não encontrar
+                    }
                 }
             }
-            catch (Exception ex)
+
+            else
             {
-                MessageBox.Show("Erro ao realizar a pesquisa: " + ex.Message);
+                cmdSql.Append("SELECT * FROM Produto");
+                using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
+                {
+
+                    DataSet DS = Conexao.RetornarDataSet(cmd);
+
+                    if (DS.Tables.Count > 0 && DS.Tables[0].Rows.Count > 0)
+                    {
+                        gridProdutos.DataSource = DS.Tables[0];
+                    }
+                }
             }
         }
     }
