@@ -114,12 +114,14 @@ namespace Aula_25_10_24
 
         // Adicionei isso para os parametros
         public void Parametro(string nome, object valor)
+            // Tem que verificar esse string nome e object valor
         {
             if (cmd == null)
             {
                 cmd = new MySqlCommand();
             }
             cmd.Parameters.AddWithValue(nome, valor);
+            // aqui o mesmo
         }
     }
 }
