@@ -61,5 +61,89 @@ namespace Aula_25_10_24
                 }
             }
         }
+
+        private void btnExcluir_Click(object sender, EventArgs e)
+        {
+            cmdSql.Clear();
+            cmdSql.Append("DELETE FROM Movto WHERE cod_movto = @Codigo");
+
+            using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
+            {
+                cmd.Parameters.AddWithValue("@Codigo", txtCodMovto.Text);
+
+                if (Conexao.ExecutarCmd(cmd) > 0)
+                {
+                    MessageBox.Show("Exclusão executada com sucesso");
+                }
+                else
+                {
+                    MessageBox.Show("Exclusão não deu certo");
+                }
+            }
+        }
+
+        private void btnPesquisar_Click(object sender, EventArgs e)
+        {
+            cmdSql.Clear();
+
+
+            if (!string.IsNullOrWhiteSpace(txtCodProd.Text))
+            {
+
+                cmdSql.Append("SELECT * FROM Movto WHERE cod_movto = @Codigo");
+
+
+                using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
+                {
+
+                    cmd.Parameters.AddWithValue("@Codigo", txtCodMovto.Text);
+
+
+                    DataSet DS = Conexao.RetornarDataSet(cmd);
+
+
+                    if (DS.Tables.Count > 0 && DS.Tables[0].Rows.Count > 0)
+                    {
+                        gridMovimento.DataSource = DS.Tables[0];
+                    }
+                    else
+                    {
+
+                        MessageBox.Show("Produto não encontrado.");
+                        gridMovimento.DataSource = null; // Limpar a grid se não encontrar
+                    }
+                }
+            }
+        }
+
+        private void btnAlterar_Click(object sender, EventArgs e)
+        {
+            string tipo = rdbEntrada.Checked ? "Entrada" : "Saida";
+
+
+            cmdSql.Clear();
+            cmdSql.Append("UPDATE Movto SET dt_movto = @dt_movto, tipo = @tipo, quant = @quant, obs = @obs WHERE cod_movto = @cod_movto");
+
+            using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
+            {
+
+                cmd.Parameters.AddWithValue("@cod_movto", txtCodMovto.Text);
+                cmd.Parameters.AddWithValue("@dt_movto", dateMovto.Value);
+                cmd.Parameters.AddWithValue("@tipo", tipo);
+                cmd.Parameters.AddWithValue("@quant", txtQuant.Text);
+                cmd.Parameters.AddWithValue("@obs", txtObservacoes.Text);
+
+
+                if (Conexao.ExecutarCmd(cmd) > 0)
+                {
+                    MessageBox.Show("Alteração feita com sucesso");
+                }
+                else
+                {
+                    MessageBox.Show("A alteração não deu certo");
+                }
+            }
+        }
+
     }
 }
