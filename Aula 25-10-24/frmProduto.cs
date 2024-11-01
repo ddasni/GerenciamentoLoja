@@ -33,51 +33,27 @@ namespace Aula_25_10_24
 
         private void btnIncluir_Click(object sender, EventArgs e)
         {
-            try
+            cmdSql.Clear();
+            cmdSql.Append("INSERT INTO Produto (cod_prod, descricao, valor, vencto) VALUES (@cod_prod, @descricao, @valor, @vencto)");
+
+            using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
             {
-                // o jeito que fiz não tava cadastrando e nem mostrando erro
-                // Ao colocar tratamento de erro começou a acusar o erro
-                // o grande problema é entender como funciona essa classe conexão com os parametros
-
-                cmdSql.Remove(0, cmdSql.Length);
-                cmdSql.Append("insert into Alunos ");
-                cmdSql.Append("(matricula, nome, email, celular, cep) ");
-                cmdSql.Append("values ");
-                cmdSql.Append("(" + txtMatricula.Text + " , '" + txtNome.Text + "' , '" + txtEmail.Text + "' ,  ");
-                cmdSql.Append(" '" + txtCelular + "' ,  '" + txtCep + "' ) ");
-                // isso é um teste
+                // Adiciona os parâmetros
+                cmd.Parameters.AddWithValue("@cod_prod", txtCodProd.Text);
+                cmd.Parameters.AddWithValue("@descricao", txtDesc.Text);
+                cmd.Parameters.AddWithValue("@valor", txtValor.Text);
+                cmd.Parameters.AddWithValue("@vencto", dtpVencto.Value);
 
 
-                // MessageBox.Show(cmdSql.ToString());
-
-                Conexao.StrSql = cmdSql.ToString();
-
-                int linhasAfetadas = Conexao.ExecutarCmd();
-
-                if (linhasAfetadas > 0)
+                // Executa o comando
+                if (Conexao.ExecutarCmd(cmd) > 0)
                 {
-                    MessageBox.Show("Cadastro feito com sucesso!",
-                                    "Sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Cadastro feito com sucesso");
                 }
                 else
                 {
-                    MessageBox.Show("O cadastro não deu certo.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("O cadastro não deu certo");
                 }
-
-                Conexao.ExecutarCmd();
-
-            }
-            catch (MySqlException ex)
-            {
-                MessageBox.Show ("Ocorreu um erro " + ex.Message, "Erro ", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ocorreu: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                Conexao.ExecutarCmd();
             }
         }
 
