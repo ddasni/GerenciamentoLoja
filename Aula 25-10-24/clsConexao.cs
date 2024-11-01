@@ -8,21 +8,17 @@ using System.Threading.Tasks;
 
 namespace Aula_25_10_24
 {
-    internal class clsConexao // "classe conexão"
+    internal class clsConexao
     {
-        // String privada para usar na classe conexão, onde essa string armazena a consulta SQL a ser executada
         private string _StrSql;
-        private MySqlCommand cmd; // Adicione um campo para o comando
 
         public string StrSql
         {
             get { return _StrSql; }
             set { _StrSql = value; }
         }
-        // String privada para usar na classe conexão, onde ela guarda uma conexão com o banco de dados MySQL
         private string strConexao = "datasource=localhost;username=root;password=;database=Loja";
 
-        // nesses dois metodos privados a baixo, como já dizem, vão abrir e fechar o banco de dados
         private MySqlConnection AbrirBanco()
         {
             MySqlConnection Conn = new MySqlConnection();
@@ -39,7 +35,6 @@ namespace Aula_25_10_24
             }
         }
 
-        // neste metodo ele executa uma consulta SQL armazenada em _StrSql e retorna um DataSet com os resultados.
         public DataSet RetornarDataSet()
         {
             MySqlConnection Conn = new MySqlConnection();
@@ -68,66 +63,38 @@ namespace Aula_25_10_24
                 Conn.Close();
             }
         }
-
-        // Neste metodo ele executa uma consulta SQL e retorna um MySqlDataReader para leitura dos dados.
-        public MySqlDataReader RetornarDataReader()
+        public DataSet RetornarDataSet(MySqlCommand cmd)
         {
+            MySqlDataAdapter DA = new MySqlDataAdapter();
+            DataSet DS = new DataSet();
 
-            MySqlConnection Conn = new MySqlConnection();
-            MySqlCommand cmd = new MySqlCommand();
+            using (MySqlConnection Conn = AbrirBanco())
+            {
+                cmd.Connection = Conn;
+                DA.SelectCommand = cmd;
+                DA.Fill(DS);
+            }
+            return DS;
+        }
 
-
+        public int ExecutarCmd(MySqlCommand cmd)
+        {
             try
             {
-                Conn = AbrirBanco();
-                cmd.CommandText = _StrSql;
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = Conn;
-
-                return cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                using (MySqlConnection Conn = AbrirBanco())
+                {
+                    cmd.Connection = Conn;
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception("Erro ao executar comando no banco de dados: " + ex.Message);
             }
             catch (Exception ex)
             {
-                // tratamento de erro
-                throw ex;
+                throw new Exception("Erro inesperado: " + ex.Message);
             }
-        }
-
-        // Neste método é usado para executar comandos SQL que não retornam dados (como INSERT, UPDATE, DELETE).
-        public int ExecutarCmd()
-        {
-            // Abre uma conexão e executa uma consulta 
-            MySqlConnection Conn = new MySqlConnection();
-            MySqlCommand cmd = new MySqlCommand();
-
-            try
-            {
-                Conn = AbrirBanco();
-                cmd.CommandText = _StrSql;
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = Conn;
-
-                return cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                // tratamento de erro
-                throw new Exception("Erro " + ex.Message.ToString());
-            }
-            finally
-            {
-                Conn.Close();
-            }
-        }
-
-        // Adicionei isso para os parametros
-        public void Parametro(string nome, object valor)
-        {
-            if (cmd == null)
-            {
-                cmd = new MySqlCommand();
-            }
-            cmd.Parameters.AddWithValue(nome, valor);
         }
     }
 }
