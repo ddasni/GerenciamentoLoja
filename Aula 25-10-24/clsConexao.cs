@@ -12,6 +12,7 @@ namespace Aula_25_10_24
     {
         // String privada para usar na classe conexão, onde essa string armazena a consulta SQL a ser executada
         private string _StrSql;
+        private MySqlCommand cmd; // Adicione um campo para o comando
 
         public string StrSql
         {
@@ -117,6 +118,16 @@ namespace Aula_25_10_24
             {
                 Conn.Close();
             }
+        }
+
+        // Adicionei isso para os parametros
+        public void Parametro(string nome, object valor)
+        {
+            if (cmd == null)
+            {
+                cmd = new MySqlCommand();
+            }
+            cmd.Parameters.AddWithValue(nome, valor);
         }
     }
 }
