@@ -20,6 +20,7 @@ namespace Aula_25_10_24
         DataSet DS;
         DataTable DT;
         SqlDataReader SDR;
+
         public frmProduto()
         {
             InitializeComponent();
@@ -34,14 +35,29 @@ namespace Aula_25_10_24
         {
             try
             {
-                cmdSql.Clear();
-                cmdSql.Append("INSERT INTO Produto (descricao, valor, vencto) " +
-                              "VALUES (@descricao, @valor, @vencto)");
+                // o jeito que fiz não tava cadastrando e nem mostrando erro
+                // Ao colocar tratamento de erro começou a acusar o erro
+                // o grande problema é entender como funciona essa classe conexão com os parametros
 
-                Conexao.Parametro("@descricao", txtDesc.Text);
-                Conexao.Parametro("@valor", Convert.ToDecimal(txtValor.Text));
-                Conexao.Parametro("@vencto", dtpVencto.Value);
+                cmdSql.Remove(0, cmdSql.Length);
+                cmdSql.Append("insert into Alunos ");
+                cmdSql.Append("(matricula, nome, email, celular, cep) ");
+                cmdSql.Append("values ");
+                cmdSql.Append("(" + txtMatricula.Text + " , '" + txtNome.Text + "' , '" + txtEmail.Text + "' ,  ");
+                cmdSql.Append(" '" + txtCelular + "' ,  '" + txtCep + "' ) ");
 
+               
+
+                cmdSql.CommandText ("INSERT INTO myTable VALUES(NULL, @number, @text)");
+                cmd.Prepare();
+
+                cmd.Parameters.AddWithValue("@number", 1);
+                cmd.Parameters.AddWithValue("@text", "One");
+
+
+                // MessageBox.Show(cmdSql.ToString());
+
+                Conexao.StrSql = cmdSql.ToString();
 
                 int linhasAfetadas = Conexao.ExecutarCmd();
 
@@ -54,6 +70,9 @@ namespace Aula_25_10_24
                 {
                     MessageBox.Show("O cadastro não deu certo.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+
+                Conexao.ExecutarCmd();
+
             }
             catch (MySqlException ex)
             {
@@ -65,7 +84,7 @@ namespace Aula_25_10_24
             }
             finally
             {
-                Conexao.StrSql = cmdSql.ToString();
+                Conexao.ExecutarCmd();
             }
         }
 
