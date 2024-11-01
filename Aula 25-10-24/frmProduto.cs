@@ -106,5 +106,25 @@ namespace Aula_25_10_24
                 }
             }
         }
+
+        private void btnExcluir_Click(object sender, EventArgs e)
+        {
+            cmdSql.Clear();
+            cmdSql.Append("DELETE FROM Produto WHERE cod_prod = @Codigo");
+
+            using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
+            {
+                cmd.Parameters.AddWithValue("@Codigo", txtCodProd.Text);
+
+                if (Conexao.ExecutarCmd(cmd) > 0)
+                {
+                    MessageBox.Show("Exclusão executada com sucesso");
+                }
+                else
+                {
+                    MessageBox.Show("Exclusão não deu certo");
+                }
+            }
+        }
     }
 }
