@@ -59,6 +59,8 @@ namespace Aula_25_10_24
                     {
                         MessageBox.Show("O cadastro não deu certo.");
                     }
+
+
                 }
                 catch (Exception ex)
                 {
@@ -91,19 +93,15 @@ namespace Aula_25_10_24
         {
             cmdSql.Clear();
 
-
-            if (!string.IsNullOrWhiteSpace(txtCodProd.Text))
+            if (!string.IsNullOrWhiteSpace(txtCodProd.Text)) // Verifica se o código do produto foi fornecido
             {
-
-                cmdSql.Append("SELECT * FROM Movto WHERE cod_movto = @Codigo");
-
+                cmdSql.Append("SELECT * FROM Movto WHERE cod_prod_fk = @cod_prod_fk");
 
                 using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
                 {
-
                     try
                     {
-                        cmd.Parameters.AddWithValue("@Codigo", txtCodMovto.Text);
+                        cmd.Parameters.AddWithValue("@cod_prod_fk", txtCodProd.Text);
 
                         DataSet DS = Conexao.RetornarDataSet(cmd);
 
@@ -114,15 +112,19 @@ namespace Aula_25_10_24
                         }
                         else
                         {
-                            MessageBox.Show("Produto não encontrado.");
+                            MessageBox.Show("Nenhum movimento encontrado para este código de produto.");
                             gridMovimento.DataSource = null; // Limpar a grid se não encontrar
                         }
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show($"{ex.Message}");
-                    }  
+                    }
                 }
+            }
+            else
+            {
+                MessageBox.Show("Por favor, insira um código de produto para pesquisar.");
             }
         }
 
@@ -155,5 +157,41 @@ namespace Aula_25_10_24
             }
         }
 
+        private void txtCodProd_TextChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(txtCodProd.Text))
+            {
+                cmdSql.Clear();
+                cmdSql.Append("SELECT descricao FROM Produto WHERE cod_prod = @cod_prod");
+
+                using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
+                {
+                    cmd.Parameters.AddWithValue("@cod_prod", txtCodProd.Text);
+
+                    try
+                    {
+                        DataSet ds = Conexao.RetornarDataSet(cmd);
+
+                        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                        {
+                            // Atualiza a label com a descrição do produto
+                            lblDesc.Text = ds.Tables[0].Rows[0]["descricao"].ToString();
+                        }
+                        else
+                        {
+                            lblDesc.Text = "Produto não encontrado.";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Erro: {ex.Message}");
+                    }
+                }
+            }
+            else
+            {
+                lblDesc.Text = string.Empty; // Limpa a descrição se o campo estiver vazio
+            }
+        }
     }
 }

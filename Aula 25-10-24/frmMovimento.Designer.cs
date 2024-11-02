@@ -134,6 +134,7 @@
             this.txtCodProd.Name = "txtCodProd";
             this.txtCodProd.Size = new System.Drawing.Size(132, 22);
             this.txtCodProd.TabIndex = 7;
+            this.txtCodProd.TextChanged += new System.EventHandler(this.txtCodProd_TextChanged);
             // 
             // txtQuant
             // 
