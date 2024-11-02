@@ -33,31 +33,36 @@ namespace Aula_25_10_24
 
         private void btnIncluir_Click(object sender, EventArgs e)
         {
-            //TEM QUE DEFINIR A FK COD_PROD, FAZENDO ELA SER PUXADA DA OUTRA TABELA
-
-            string tipo = rdbEntrada.Checked ? "Entrada" : "Saida";
 
             cmdSql.Clear();
-            cmdSql.Append("INSERT INTO Movto (cod_movto_fk, dt_movto, tipo, quant, obs) VALUES (@cod_movto, @dt_movto, @tipo, @quant, @obs)");
+            cmdSql.Append("INSERT INTO Movto (cod_prod_fk, dt_movto, tipo, quant, obs) VALUES (@cod_prod_fk, @dt_movto, @tipo, @quant, @obs)");
 
             using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
             {
-                // Adiciona os parâmetros
-                cmd.Parameters.AddWithValue("@cod_movto_fk", txtCodMovto.Text);
-                cmd.Parameters.AddWithValue("@dt_movto", dateMovto.Value);
-                cmd.Parameters.AddWithValue("@tipo", tipo);
-                cmd.Parameters.AddWithValue("@quant", txtQuant.Text);
-                cmd.Parameters.AddWithValue("@obs", txtObservacoes.Text);
-
-
-
-                if (Conexao.ExecutarCmd(cmd) > 0)
+                try
                 {
-                    MessageBox.Show("Cadastro feito com sucesso");
+
+                    // Adiciona os parâmetros
+                    cmd.Parameters.AddWithValue("@cod_prod_fk", txtCodProd.Text);
+                    cmd.Parameters.AddWithValue("@dt_movto", dateMovto.Value);
+                    string tipo = rdbEntrada.Checked ? "Entrada" : "Saida";
+                    cmd.Parameters.AddWithValue("@tipo", tipo);
+                    cmd.Parameters.AddWithValue("@quant", txtQuant.Text);
+                    cmd.Parameters.AddWithValue("@obs", txtObservacoes.Text);
+
+                    // Executa o comando
+                    if (Conexao.ExecutarCmd(cmd) > 0)
+                    {
+                        MessageBox.Show("Cadastro incluído com sucesso.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("O cadastro não deu certo.");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("O cadastro não deu certo");
+                    MessageBox.Show($"{ex.Message}");
                 }
             }
         }
@@ -96,22 +101,27 @@ namespace Aula_25_10_24
                 using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
                 {
 
-                    cmd.Parameters.AddWithValue("@Codigo", txtCodMovto.Text);
-
-
-                    DataSet DS = Conexao.RetornarDataSet(cmd);
-
-
-                    if (DS.Tables.Count > 0 && DS.Tables[0].Rows.Count > 0)
+                    try
                     {
-                        gridMovimento.DataSource = DS.Tables[0];
-                    }
-                    else
-                    {
+                        cmd.Parameters.AddWithValue("@Codigo", txtCodMovto.Text);
 
-                        MessageBox.Show("Produto não encontrado.");
-                        gridMovimento.DataSource = null; // Limpar a grid se não encontrar
+                        DataSet DS = Conexao.RetornarDataSet(cmd);
+
+                        if (DS.Tables.Count > 0 && DS.Tables[0].Rows.Count > 0)
+                        {
+                            gridMovimento.DataSource = DS.Tables[0];
+                            gridMovimento.Visible = true; // Tornar o grid visível
+                        }
+                        else
+                        {
+                            MessageBox.Show("Produto não encontrado.");
+                            gridMovimento.DataSource = null; // Limpar a grid se não encontrar
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"{ex.Message}");
+                    }  
                 }
             }
         }

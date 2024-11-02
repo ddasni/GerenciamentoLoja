@@ -34,12 +34,11 @@ namespace Aula_25_10_24
         private void btnIncluir_Click(object sender, EventArgs e)
         {
             cmdSql.Clear();
-            cmdSql.Append("INSERT INTO Produto (cod_prod, descricao, valor, vencto) VALUES (@cod_prod, @descricao, @valor, @vencto)");
+            cmdSql.Append("INSERT INTO Produto (descricao, valor, vencto) VALUES (@descricao, @valor, @vencto)");
 
             using (MySqlCommand cmd = new MySqlCommand(cmdSql.ToString()))
             {
                 // Adiciona os parâmetros
-                cmd.Parameters.AddWithValue("@cod_prod", txtCodProd.Text);
                 cmd.Parameters.AddWithValue("@descricao", txtDesc.Text);
                 cmd.Parameters.AddWithValue("@valor", txtValor.Text);
                 cmd.Parameters.AddWithValue("@vencto", dtpVencto.Value);
